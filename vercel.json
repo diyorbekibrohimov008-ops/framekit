@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/api/share/:id",
+      "destination": "/api/share?id=:id"
+    },
+    {
+      "source": "/api/brand-kits/:code",
+      "destination": "/api/brand-kits?code=:code"
+    },
+    {
+      "source": "/((?!api(?:/|$)|assets/|favicon\\.svg|manifest\\.webmanifest).*)",
+      "destination": "/index.html"
+    }
+  ]
+}

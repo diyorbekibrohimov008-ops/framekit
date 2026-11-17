@@ -1,0 +1,16 @@
+{
+  "name": "FrameKit Studio",
+  "short_name": "FrameKit",
+  "description": "Cross-platform screenshot, privacy redaction, and Team Brand Kit mockup studio.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0c10",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
