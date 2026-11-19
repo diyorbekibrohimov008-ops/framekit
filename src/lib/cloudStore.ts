@@ -62,7 +62,7 @@ function createVercelBlobStore(namespace: string): BlobStoreLike {
         ) {
           return null;
         }
-        console.error(`[FrameKit:${namespace}] Vercel Blob read error:`, err);
+        console.error("FrameKit Vercel Blob read error:", namespace, err);
         return null;
       }
     },

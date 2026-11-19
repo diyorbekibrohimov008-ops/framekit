@@ -109,7 +109,7 @@ function drawWindowChrome(
   if (settings.windowFrame === "windows-11") {
     // Title on left, Win11 controls on right
     ctx.fillStyle = "#cbd5e1";
-    ctx.font = `500 12.5px "${fontFamily}", Inter, sans-serif`;
+    ctx.font = `500 12.5px "${fontFamily}", Figtree, sans-serif`;
     ctx.textBaseline = "middle";
     ctx.fillText(settings.windowTitle || "FrameKit Capture", x + 16, y + h / 2);
 
@@ -153,7 +153,7 @@ function drawWindowChrome(
     ctx.fill();
 
     ctx.fillStyle = "#475569";
-    ctx.font = `500 12px "${fontFamily}", Inter, sans-serif`;
+    ctx.font = `500 12px "${fontFamily}", Figtree, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(
@@ -167,7 +167,7 @@ function drawWindowChrome(
 
   if (settings.windowTitle) {
     ctx.fillStyle = isLight ? "#475569" : "#94a3b8";
-    ctx.font = `500 12.5px "${fontFamily}", Inter, sans-serif`;
+    ctx.font = `500 12.5px "${fontFamily}", Figtree, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(settings.windowTitle, x + width / 2, y + h / 2);
@@ -315,12 +315,12 @@ function drawAnnotations(
       ctx.lineWidth = 2;
       ctx.stroke();
       ctx.fillStyle = "#ffffff";
-      ctx.font = `700 13px "${fontFamily}", Inter, sans-serif`;
+      ctx.font = `700 13px "${fontFamily}", Figtree, sans-serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(String(item.number ?? 1), x, y + 0.5);
     } else if (item.kind === "text" && item.text) {
-      ctx.font = `600 14px "${fontFamily}", Inter, sans-serif`;
+      ctx.font = `600 14px "${fontFamily}", Figtree, sans-serif`;
       const metrics = ctx.measureText(item.text);
       const padX = 12;
       const boxW = metrics.width + padX * 2;
@@ -366,19 +366,19 @@ function drawWatermark(
       cursorX += lw + 10;
     }
     ctx.fillStyle = "#f8fafc";
-    ctx.font = `600 13px "${brandKit.fontFamily}", Inter, sans-serif`;
+    ctx.font = `600 13px "${brandKit.fontFamily}", Figtree, sans-serif`;
     ctx.textBaseline = "middle";
     ctx.fillText(brandKit.watermarkText || brandKit.name, cursorX, barY + 21);
 
     ctx.fillStyle = brandKit.accentHex;
     ctx.textAlign = "right";
-    ctx.font = `600 11.5px "${brandKit.fontFamily}", Inter, sans-serif`;
+    ctx.font = `600 11.5px "${brandKit.fontFamily}", Figtree, sans-serif`;
     ctx.fillText(brandKit.name, geo.logicalWidth - 24, barY + 21);
     ctx.restore();
     return;
   }
 
-  ctx.font = `600 13px "${brandKit.fontFamily}", Inter, sans-serif`;
+  ctx.font = `600 13px "${brandKit.fontFamily}", Figtree, sans-serif`;
   const textW = hasText ? ctx.measureText(brandKit.watermarkText).width : 0;
   const logoH = 20;
   const logoW =
@@ -436,7 +436,7 @@ export function renderMockupCanvas(params: RenderMockupParams): LayoutGeometry {
   } = params;
 
   const watermarkPosition = brandKit?.watermarkPosition ?? "bottom-right";
-  const fontFamily = brandKit?.fontFamily ?? "Plus Jakarta Sans";
+  const fontFamily = brandKit?.fontFamily ?? "Figtree";
 
   const geo = computeMockupGeometry({
     imageWidth,
@@ -467,7 +467,7 @@ export function renderMockupCanvas(params: RenderMockupParams): LayoutGeometry {
     ctx.save();
     ctx.textAlign = "center";
     ctx.fillStyle = "#ffffff";
-    ctx.font = `700 28px "${fontFamily}", Inter, sans-serif`;
+    ctx.font = `700 28px "${fontFamily}", Figtree, sans-serif`;
     ctx.fillText(
       settings.headline || "Ship crisp, privacy-safe product visuals",
       geo.logicalWidth / 2,
@@ -475,7 +475,7 @@ export function renderMockupCanvas(params: RenderMockupParams): LayoutGeometry {
     );
     if (settings.subheadline) {
       ctx.fillStyle = "rgba(241, 245, 249, 0.78)";
-      ctx.font = `500 15px "${fontFamily}", Inter, sans-serif`;
+      ctx.font = `500 15px "${fontFamily}", Figtree, sans-serif`;
       ctx.fillText(
         settings.subheadline,
         geo.logicalWidth / 2,

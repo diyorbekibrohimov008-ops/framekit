@@ -67,7 +67,7 @@ export function ShareViewer({ shareId }: ShareViewerProps) {
             <a
               href={data.imageDataUrl}
               download={`framekit-${data.id}.png`}
-              className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-indigo-500"
+              className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-teal-500"
             >
               <Download className="h-3.5 w-3.5" /> Download PNG
             </a>

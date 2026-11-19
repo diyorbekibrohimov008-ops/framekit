@@ -58,9 +58,9 @@ function collectMatches(
   filter?: (raw: string) => boolean,
 ): SensitiveMatch[] {
   const results: SensitiveMatch[] = [];
-  const pattern = new RegExp(regex.source, regex.flags);
+  regex.lastIndex = 0;
   let match: RegExpExecArray | null;
-  while ((match = pattern.exec(text)) !== null) {
+  while ((match = regex.exec(text)) !== null) {
     const value = match[0];
     if (filter && !filter(value)) continue;
     results.push({
@@ -71,6 +71,7 @@ function collectMatches(
       end: match.index + value.length,
     });
   }
+  regex.lastIndex = 0;
   return results;
 }
 

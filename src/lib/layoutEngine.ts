@@ -154,7 +154,7 @@ export function extractDominantGradient(
   height: number,
 ): { start: string; end: string } {
   if (pixels.length < 4 || width <= 0 || height <= 0) {
-    return { start: "#6366f1", end: "#06b6d4" };
+    return { start: "#0d9488", end: "#0284c7" };
   }
 
   let rTop = 0;
@@ -188,7 +188,7 @@ export function extractDominantGradient(
   }
 
   if (cTop === 0 || cBot === 0) {
-    return { start: "#6366f1", end: "#06b6d4" };
+    return { start: "#0d9488", end: "#0284c7" };
   }
 
   const start = rgbToHex(rTop / cTop, gTop / cTop, bTop / cTop);

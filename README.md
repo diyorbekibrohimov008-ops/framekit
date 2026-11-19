@@ -7,6 +7,10 @@
 
 **FrameKit** is a high-performance, cross-platform screenshot and product mockup studio built for marketing teams, developers, and product creators. It solves the biggest limitations of macOS-only tools (like CleanShot X and Xnapper) by bringing full parity to Windows and Linux, 1-click automatic privacy redaction, and shared Team Brand Kits.
 
+> [!WARNING]
+> **Project Status — Work in Progress (Not Fully Ready)**
+> This project is currently under active development and is **not fully ready for production**. Some parts, features, or workflow steps will fail or behave unexpectedly. We are actively working on fixing all remaining issues.
+
 ---
 
 ## 🌟 Live Deployments & Demos

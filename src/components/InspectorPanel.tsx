@@ -69,12 +69,12 @@ interface InspectorPanelProps {
 }
 
 const PRESET_GRADIENTS = [
-  { name: "Aurora", start: "#4f46e5", end: "#06b6d4", angle: 135, accent: "#22d3ee" },
-  { name: "Obsidian", start: "#1e1b4b", end: "#090d16", angle: 145, accent: "#6366f1" },
+  { name: "Aurora", start: "#0d9488", end: "#0284c7", angle: 135, accent: "#2dd4bf" },
+  { name: "Obsidian", start: "#134e4a", end: "#090d16", angle: 145, accent: "#14b8a6" },
   { name: "Sunset", start: "#db2777", end: "#f97316", angle: 130, accent: "#fbbf24" },
   { name: "Emerald", start: "#065f46", end: "#0f172a", angle: 140, accent: "#34d399" },
   { name: "Nord", start: "#3b82f6", end: "#1e293b", angle: 135, accent: "#60a5fa" },
-  { name: "Rose", start: "#be185d", end: "#312e81", angle: 125, accent: "#f472b6" },
+  { name: "Rose", start: "#be185d", end: "#881337", angle: 125, accent: "#f472b6" },
 ];
 
 const ASPECT_RATIOS: { id: AspectRatioPreset; label: string }[] = [
@@ -172,7 +172,7 @@ export function InspectorPanel({
               onClick={() => onTabChange(id)}
               className={`flex flex-col items-center gap-1 rounded-xl px-2 py-2 text-[11px] font-medium transition ${
                 active
-                  ? "bg-indigo-500/20 text-indigo-300 ring-1 ring-indigo-500/40"
+                  ? "bg-teal-500/20 text-teal-300 ring-1 ring-teal-500/40"
                   : "text-slate-400 hover:bg-white/5 hover:text-slate-200"
               }`}
             >
@@ -203,7 +203,7 @@ export function InspectorPanel({
                     onClick={() => onUpdateSettings({ aspectRatio: ar.id })}
                     className={`rounded-lg py-1.5 text-xs font-medium transition ${
                       settings.aspectRatio === ar.id
-                        ? "bg-indigo-600 text-white"
+                        ? "bg-teal-600 text-white"
                         : "border border-white/10 bg-white/[0.03] text-slate-300 hover:bg-white/10"
                     }`}
                   >
@@ -317,7 +317,7 @@ export function InspectorPanel({
                         },
                       })
                     }
-                    className="flex-1 accent-indigo-500"
+                    className="flex-1 accent-teal-500"
                   />
                 </div>
               )}
@@ -336,7 +336,7 @@ export function InspectorPanel({
                     onClick={() => onUpdateSettings({ windowFrame: wf.id })}
                     className={`rounded-lg px-2.5 py-2 text-left text-xs font-medium transition ${
                       settings.windowFrame === wf.id
-                        ? "bg-indigo-600 text-white"
+                        ? "bg-teal-600 text-white"
                         : "border border-white/10 bg-white/[0.03] text-slate-300 hover:bg-white/10"
                     }`}
                   >
@@ -352,7 +352,7 @@ export function InspectorPanel({
                     onUpdateSettings({ browserUrl: e.target.value })
                   }
                   placeholder="https://app.yourcompany.com"
-                  className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-1.5 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none"
+                  className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-1.5 text-xs text-slate-200 focus:border-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/40"
                 />
               )}
               {(settings.windowFrame === "macos-dark" ||
@@ -365,7 +365,7 @@ export function InspectorPanel({
                     onUpdateSettings({ windowTitle: e.target.value })
                   }
                   placeholder="Window title..."
-                  className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-1.5 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none"
+                  className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-1.5 text-xs text-slate-200 focus:border-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/40"
                 />
               )}
             </section>
@@ -385,7 +385,7 @@ export function InspectorPanel({
                   onChange={(e) =>
                     onUpdateSettings({ padding: Number(e.target.value) })
                   }
-                  className="mt-1 w-full accent-indigo-500"
+                  className="mt-1 w-full accent-teal-500"
                 />
               </div>
               <div>
@@ -401,7 +401,7 @@ export function InspectorPanel({
                   onChange={(e) =>
                     onUpdateSettings({ borderRadius: Number(e.target.value) })
                   }
-                  className="mt-1 w-full accent-indigo-500"
+                  className="mt-1 w-full accent-teal-500"
                 />
               </div>
               <div>
@@ -417,7 +417,7 @@ export function InspectorPanel({
                   onChange={(e) =>
                     onUpdateSettings({ shadowIntensity: Number(e.target.value) })
                   }
-                  className="mt-1 w-full accent-indigo-500"
+                  className="mt-1 w-full accent-teal-500"
                 />
               </div>
               <label className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2 text-xs text-slate-300">
@@ -428,7 +428,7 @@ export function InspectorPanel({
                   onChange={(e) =>
                     onUpdateSettings({ showHeadline: e.target.checked })
                   }
-                  className="accent-indigo-500"
+                  className="accent-teal-500"
                 />
               </label>
               {settings.showHeadline && (
@@ -509,7 +509,7 @@ export function InspectorPanel({
                     onClick={() => onUpdateSettings({ redactionStyle: st.id })}
                     className={`rounded-lg py-1.5 text-xs font-medium transition ${
                       settings.redactionStyle === st.id
-                        ? "bg-indigo-600 text-white"
+                        ? "bg-teal-600 text-white"
                         : "border border-white/10 bg-white/[0.03] text-slate-300 hover:bg-white/10"
                     }`}
                   >
@@ -671,7 +671,7 @@ export function InspectorPanel({
                     onClick={() => onChangeMode(id)}
                     className={`flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium transition ${
                       interactionMode === id
-                        ? "bg-indigo-600 text-white"
+                        ? "bg-teal-600 text-white"
                         : "border border-white/10 bg-white/[0.03] text-slate-300 hover:bg-white/10"
                     }`}
                   >
@@ -689,7 +689,7 @@ export function InspectorPanel({
               <div className="flex flex-wrap items-center gap-2">
                 {[
                   activeBrandKit?.accentHex ?? "#22d3ee",
-                  "#6366f1",
+                  "#0d9488",
                   "#f43f5e",
                   "#f59e0b",
                   "#10b981",
@@ -757,9 +757,9 @@ export function InspectorPanel({
 
         {activeTab === "brand-kits" && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between rounded-xl border border-indigo-500/25 bg-indigo-500/10 px-3 py-2.5 text-xs">
+            <div className="flex items-center justify-between rounded-xl border border-teal-500/25 bg-teal-500/10 px-3 py-2.5 text-xs">
               <div>
-                <div className="text-[11px] text-indigo-300">Active Brand Kit</div>
+                <div className="text-[11px] text-teal-300">Active Brand Kit</div>
                 <div className="font-semibold text-white">
                   Active: {activeBrandKit ? activeBrandKit.name : "Custom"}
                 </div>
@@ -767,7 +767,7 @@ export function InspectorPanel({
               <button
                 type="button"
                 onClick={onCreateBrandKit}
-                className="flex items-center gap-1 rounded-lg bg-indigo-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-indigo-500"
+                className="flex items-center gap-1 rounded-lg bg-teal-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-teal-500"
               >
                 <Plus className="h-3.5 w-3.5" /> New Kit
               </button>
@@ -783,8 +783,8 @@ export function InspectorPanel({
                   type="text"
                   value={teamCodeInput}
                   onChange={(e) => setTeamCodeInput(e.target.value.toUpperCase())}
-                  placeholder="Enter Team Code (e.g. ACME-4040)"
-                  className="flex-1 rounded-lg border border-white/10 bg-black/30 px-2.5 py-1.5 font-mono text-xs text-white focus:border-indigo-500 focus:outline-none"
+                  placeholder="Enter Team Code (e.g. NRTH-4040)"
+                  className="flex-1 rounded-lg border border-white/10 bg-black/30 px-2.5 py-1.5 font-mono text-xs text-white focus:border-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/40"
                 />
                 <button
                   type="button"
@@ -824,7 +824,7 @@ export function InspectorPanel({
                     key={kit.id}
                     className={`rounded-xl border p-3 transition ${
                       isActive
-                        ? "border-indigo-500 bg-indigo-500/10"
+                        ? "border-teal-500 bg-teal-500/10"
                         : "border-white/10 bg-white/[0.02] hover:border-white/25"
                     }`}
                   >
@@ -872,8 +872,8 @@ export function InspectorPanel({
                         onClick={() => onApplyBrandKit(kit)}
                         className={`flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium transition ${
                           isActive
-                            ? "bg-indigo-600 text-white"
-                            : "bg-white/10 text-slate-200 hover:bg-indigo-600 hover:text-white"
+                            ? "bg-teal-600 text-white"
+                            : "bg-white/10 text-slate-200 hover:bg-teal-600 hover:text-white"
                         }`}
                       >
                         {isActive && <Check className="h-3 w-3" />}

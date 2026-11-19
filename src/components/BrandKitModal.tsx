@@ -31,13 +31,13 @@ export function BrandKitModal({
           id: `kit-${Date.now().toString(36)}`,
           name: "My Team Brand Kit",
           teamCode: generateTeamCode(),
-          primaryHex: "#6366f1",
+          primaryHex: "#0d9488",
           secondaryHex: "#0f172a",
-          accentHex: "#22d3ee",
-          bgGradientStart: "#312e81",
+          accentHex: "#2dd4bf",
+          bgGradientStart: "#134e4a",
           bgGradientEnd: "#0f172a",
           bgAngle: 135,
-          fontFamily: "Plus Jakarta Sans",
+          fontFamily: "Bricolage Grotesque",
           defaultAspectRatio: "16:9",
           defaultPadding: 64,
           borderRadius: 16,
@@ -228,10 +228,10 @@ export function BrandKitModal({
                 }
                 className="w-full rounded-lg border border-white/10 bg-[#0b0e16] px-2.5 py-2 text-white"
               >
-                <option value="Plus Jakarta Sans">Plus Jakarta Sans</option>
-                <option value="Inter">Inter</option>
-                <option value="Space Grotesk">Space Grotesk</option>
-                <option value="JetBrains Mono">JetBrains Mono</option>
+                <option value="Bricolage Grotesque">Bricolage Grotesque</option>
+                <option value="Figtree">Figtree</option>
+                <option value="DM Mono">DM Mono</option>
+                <option value="IBM Plex Sans">IBM Plex Sans</option>
               </select>
             </div>
             <div>
@@ -383,7 +383,7 @@ export function BrandKitModal({
           <button
             type="button"
             onClick={handleSave}
-            className="rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white hover:bg-indigo-500"
+            className="rounded-xl bg-teal-600 px-4 py-2 text-xs font-semibold text-white hover:bg-teal-500"
           >
             Save & Apply Kit
           </button>

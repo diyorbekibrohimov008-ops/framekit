@@ -11,13 +11,13 @@ export const CURATED_BRAND_KITS: BrandKit[] = [
     id: "kit-framekit-obsidian",
     name: "FrameKit Studio",
     teamCode: "FRMK-2026",
-    primaryHex: "#6366f1",
+    primaryHex: "#0d9488",
     secondaryHex: "#0f172a",
-    accentHex: "#22d3ee",
-    bgGradientStart: "#1e1b4b",
+    accentHex: "#2dd4bf",
+    bgGradientStart: "#134e4a",
     bgGradientEnd: "#090d16",
     bgAngle: 135,
-    fontFamily: "Plus Jakarta Sans",
+    fontFamily: "Bricolage Grotesque",
     defaultAspectRatio: "16:9",
     defaultPadding: 64,
     borderRadius: 16,
@@ -31,13 +31,13 @@ export const CURATED_BRAND_KITS: BrandKit[] = [
     id: "kit-acme-saas",
     name: "Acme SaaS Marketing",
     teamCode: "ACME-4040",
-    primaryHex: "#4f46e5",
+    primaryHex: "#0f766e",
     secondaryHex: "#f8fafc",
     accentHex: "#06b6d4",
-    bgGradientStart: "#312e81",
-    bgGradientEnd: "#0ea5e9",
+    bgGradientStart: "#115e59",
+    bgGradientEnd: "#0284c7",
     bgAngle: 128,
-    fontFamily: "Plus Jakarta Sans",
+    fontFamily: "Figtree",
     defaultAspectRatio: "16:9",
     defaultPadding: 72,
     borderRadius: 18,
@@ -57,7 +57,7 @@ export const CURATED_BRAND_KITS: BrandKit[] = [
     bgGradientStart: "#064e3b",
     bgGradientEnd: "#0f172a",
     bgAngle: 150,
-    fontFamily: "JetBrains Mono",
+    fontFamily: "DM Mono",
     defaultAspectRatio: "4:3",
     defaultPadding: 56,
     borderRadius: 12,
@@ -71,13 +71,13 @@ export const CURATED_BRAND_KITS: BrandKit[] = [
     id: "kit-launch-social",
     name: "Launch Social 4:5",
     teamCode: "LNCH-9090",
-    primaryHex: "#ec4899",
+    primaryHex: "#f59e0b",
     secondaryHex: "#18181b",
-    accentHex: "#f59e0b",
-    bgGradientStart: "#701a75",
+    accentHex: "#fbbf24",
+    bgGradientStart: "#78350f",
     bgGradientEnd: "#ea580c",
     bgAngle: 140,
-    fontFamily: "Space Grotesk",
+    fontFamily: "Bricolage Grotesque",
     defaultAspectRatio: "4:5",
     defaultPadding: 56,
     borderRadius: 20,
@@ -93,10 +93,10 @@ const HEX_REGEX = /^#[0-9a-fA-F]{6}$/;
 const SAFE_DATA_IMAGE_REGEX =
   /^data:image\/(?:png|jpeg|jpg|webp|svg\+xml);base64,[A-Za-z0-9+/=]+$/i;
 const VALID_FONTS = new Set<FontFamilyOption>([
-  "Inter",
-  "Plus Jakarta Sans",
-  "JetBrains Mono",
-  "Space Grotesk",
+  "Figtree",
+  "Bricolage Grotesque",
+  "DM Mono",
+  "IBM Plex Sans",
 ]);
 const VALID_ASPECTS = new Set<AspectRatioPreset>([
   "auto",
@@ -154,7 +154,7 @@ export function validateBrandKit(raw: unknown): BrandKit {
 
   const fontFamily = VALID_FONTS.has(obj.fontFamily as FontFamilyOption)
     ? (obj.fontFamily as FontFamilyOption)
-    : "Inter";
+    : "Figtree";
   const defaultAspectRatio = VALID_ASPECTS.has(
     obj.defaultAspectRatio as AspectRatioPreset,
   )

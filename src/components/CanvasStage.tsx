@@ -248,7 +248,7 @@ export function CanvasStage({
   return (
     <div
       className={`relative flex flex-1 flex-col items-center justify-center overflow-auto bg-[#07090e] p-4 sm:p-8 ${
-        dragOver ? "ring-2 ring-inset ring-indigo-500" : ""
+        dragOver ? "ring-2 ring-inset ring-teal-500" : ""
       }`}
       onDragOver={(e) => {
         e.preventDefault();
@@ -284,7 +284,7 @@ export function CanvasStage({
         {interactionMode !== "select" && (
           <>
             <span className="text-white/15">|</span>
-            <span className="rounded-full bg-indigo-500/20 px-2 py-0.5 text-[11px] font-medium text-indigo-300">
+            <span className="rounded-full bg-teal-500/20 px-2 py-0.5 text-[11px] font-medium text-teal-300">
               {interactionMode === "manual-blur"
                 ? "Drag on screenshot to blur region"
                 : `Tool: ${interactionMode} — click or drag`}

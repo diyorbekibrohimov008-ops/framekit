@@ -74,29 +74,29 @@ function createBillingSample(): SampleShot {
     ctx.fillRect(209, 0, 1, height);
 
     ctx.fillStyle = "#f8fafc";
-    ctx.font = "700 18px Inter, sans-serif";
-    ctx.fillText("Acme Cloud", 28, 44);
+    ctx.font = "700 18px 'Bricolage Grotesque', sans-serif";
+    ctx.fillText("Northstar Cloud", 28, 44);
     const navItems = ["Overview", "API Keys", "Billing", "Audit Logs", "Team"];
     navItems.forEach((label, idx) => {
       const y = 96 + idx * 40;
       if (idx === 2) {
-        ctx.fillStyle = "rgba(99, 102, 241, 0.2)";
+        ctx.fillStyle = "rgba(13, 148, 136, 0.22)";
         drawRoundedRect(ctx, 18, y - 22, 174, 34, 8);
         ctx.fill();
-        ctx.fillStyle = "#a5b4fc";
+        ctx.fillStyle = "#5eead4";
       } else {
         ctx.fillStyle = "#94a3b8";
       }
-      ctx.font = "500 14px Inter, sans-serif";
+      ctx.font = "500 14px Figtree, sans-serif";
       ctx.fillText(label, 30, y);
     });
 
     // Header
     ctx.fillStyle = "#f8fafc";
-    ctx.font = "700 22px Inter, sans-serif";
+    ctx.font = "700 22px 'Bricolage Grotesque', sans-serif";
     ctx.fillText("Production Billing & Credentials", 244, 52);
     ctx.fillStyle = "#94a3b8";
-    ctx.font = "400 13px Inter, sans-serif";
+    ctx.font = "400 13px Figtree, sans-serif";
     ctx.fillText("Last synced 2026-11-11 • Workspace ID ws_prod_8821", 244, 76);
 
     // Card 1: Customer & Payment Method
@@ -107,7 +107,7 @@ function createBillingSample(): SampleShot {
     ctx.stroke();
 
     ctx.fillStyle = "#e2e8f0";
-    ctx.font = "600 15px Inter, sans-serif";
+    ctx.font = "600 15px Figtree, sans-serif";
     ctx.fillText("Account Contact & Corporate Card", 268, 136);
 
     ctx.fillStyle = "#cbd5e1";
@@ -132,7 +132,7 @@ function createBillingSample(): SampleShot {
     ctx.stroke();
 
     ctx.fillStyle = "#e2e8f0";
-    ctx.font = "600 15px Inter, sans-serif";
+    ctx.font = "600 15px Figtree, sans-serif";
     ctx.fillText("Environment Secrets (Production)", 268, 348);
 
     ctx.fillStyle = "#090f1d";
@@ -140,7 +140,7 @@ function createBillingSample(): SampleShot {
     ctx.fill();
 
     ctx.fillStyle = "#38bdf8";
-    ctx.font = "500 13.5px 'JetBrains Mono', monospace";
+    ctx.font = "500 13.5px 'DM Mono', monospace";
     const s1 = "STRIPE_SECRET_KEY = sk_test_51N9xYzAbCdEfGhIjKlMnOpQr";
     ctx.fillText(s1, 288, 404);
     recordLineTokens(ctx, s1, 288, 404, 13.5, 4, ocrWords);
@@ -238,17 +238,17 @@ function createAnalyticsSample(): SampleShot {
     ctx.fillRect(0, 0, width, height);
 
     ctx.fillStyle = "#0f172a";
-    ctx.font = "700 24px 'Plus Jakarta Sans', sans-serif";
+    ctx.font = "700 24px 'Bricolage Grotesque', sans-serif";
     ctx.fillText("Q4 Release Funnel — Cross-Platform Growth", 40, 56);
 
     ctx.fillStyle = "#64748b";
-    ctx.font = "500 14px Inter, sans-serif";
+    ctx.font = "500 14px Figtree, sans-serif";
     const ownerLine = "Report owner: growth@framekit.io • Call +44 20 7946 0958";
     ctx.fillText(ownerLine, 40, 86);
     recordLineTokens(ctx, ownerLine, 40, 86, 14, 1, ocrWords);
 
     const kpis = [
-      { label: "Windows + Linux Users", value: "71.4%", delta: "+24% MoM", color: "#4f46e5" },
+      { label: "Windows + Linux Users", value: "71.4%", delta: "+24% MoM", color: "#0f766e" },
       { label: "Secrets Auto-Redacted", value: "14,820", delta: "0 leaks", color: "#059669" },
       { label: "Brand Kit Adoption", value: "94%", delta: "38 teams", color: "#0284c7" },
     ];
@@ -262,15 +262,15 @@ function createAnalyticsSample(): SampleShot {
       ctx.stroke();
 
       ctx.fillStyle = "#64748b";
-      ctx.font = "500 13px Inter, sans-serif";
+      ctx.font = "500 13px Figtree, sans-serif";
       ctx.fillText(kpi.label, x + 22, 152);
 
       ctx.fillStyle = "#0f172a";
-      ctx.font = "800 32px 'Plus Jakarta Sans', sans-serif";
+      ctx.font = "800 32px 'Bricolage Grotesque', sans-serif";
       ctx.fillText(kpi.value, x + 22, 200);
 
       ctx.fillStyle = kpi.color;
-      ctx.font = "600 13px Inter, sans-serif";
+      ctx.font = "600 13px Figtree, sans-serif";
       ctx.fillText(kpi.delta, x + 22, 228);
     });
 
@@ -282,7 +282,7 @@ function createAnalyticsSample(): SampleShot {
     ctx.stroke();
 
     ctx.fillStyle = "#0f172a";
-    ctx.font = "600 15px Inter, sans-serif";
+    ctx.font = "600 15px Figtree, sans-serif";
     ctx.fillText("Weekly Shared Mockups by Platform", 64, 314);
 
     const bars = [120, 155, 195, 225, 270, 310, 365, 410];
@@ -291,7 +291,7 @@ function createAnalyticsSample(): SampleShot {
       const bh = Math.round((val / 430) * 165);
       const by = 500 - bh;
       const grad = ctx.createLinearGradient(0, by, 0, 500);
-      grad.addColorStop(0, "#6366f1");
+      grad.addColorStop(0, "#0d9488");
       grad.addColorStop(1, "#06b6d4");
       ctx.fillStyle = grad;
       drawRoundedRect(ctx, bx, by, 54, bh, 8);

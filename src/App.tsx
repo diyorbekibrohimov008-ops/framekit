@@ -496,7 +496,7 @@ function StudioWorkspace() {
                 <span className="text-sm font-bold tracking-tight text-white">
                   FrameKit
                 </span>
-                <span className="rounded-full border border-indigo-500/30 bg-indigo-500/15 px-2 py-0.5 text-[10px] font-semibold text-indigo-300">
+                <span className="rounded-full border border-teal-500/30 bg-teal-500/15 px-2 py-0.5 text-[10px] font-semibold text-teal-300">
                   {osLabel} Parity
                 </span>
               </div>
@@ -587,7 +587,7 @@ function StudioWorkspace() {
             type="button"
             onClick={handleCloudShare}
             disabled={sharing}
-            className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:bg-indigo-500 disabled:opacity-60"
+            className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-lg shadow-teal-500/25 transition hover:bg-teal-500 disabled:opacity-60"
           >
             <Share2 className="h-3.5 w-3.5" />
             {sharing ? "Sharing..." : "Share Link"}
@@ -597,7 +597,7 @@ function StudioWorkspace() {
 
       {/* Share Link Banner */}
       {lastShareUrl && (
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-indigo-500/30 bg-indigo-500/15 px-5 py-2 text-xs text-indigo-100">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-teal-500/30 bg-teal-500/15 px-5 py-2 text-xs text-teal-100">
           <div className="flex items-center gap-2">
             <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
             <span>Live Cloud Share URL ready (copied to clipboard):</span>

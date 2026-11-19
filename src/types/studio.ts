@@ -71,10 +71,10 @@ export type WatermarkPosition =
   | "footer-bar";
 
 export type FontFamilyOption =
-  | "Inter"
-  | "Plus Jakarta Sans"
-  | "JetBrains Mono"
-  | "Space Grotesk";
+  | "Figtree"
+  | "Bricolage Grotesque"
+  | "DM Mono"
+  | "IBM Plex Sans";
 
 export interface BrandKit {
   id: string;

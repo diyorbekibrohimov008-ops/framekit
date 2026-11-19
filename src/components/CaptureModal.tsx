@@ -33,10 +33,10 @@ export function CaptureModal({
       aria-modal="true"
       aria-label="New Screenshot or Mockup"
     >
-      <div className="w-full max-w-2xl rounded-2xl border border-white/10 bg-[#121620] p-6 shadow-2xl">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto overscroll-contain rounded-2xl border border-white/10 bg-[#121620] p-6 shadow-2xl">
         <div className="flex items-center justify-between border-b border-white/10 pb-4">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-400">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-500/15 text-teal-400">
               <Camera className="h-5 w-5" />
             </div>
             <div>
@@ -62,9 +62,9 @@ export function CaptureModal({
           <button
             type="button"
             onClick={onScreenCapture}
-            className="flex flex-col items-start gap-2 rounded-xl border border-indigo-500/30 bg-indigo-500/10 p-4 text-left transition hover:border-indigo-400 hover:bg-indigo-500/20"
+            className="flex flex-col items-start gap-2 rounded-xl border border-teal-500/30 bg-teal-500/10 p-4 text-left transition hover:border-teal-400 hover:bg-teal-500/20"
           >
-            <Monitor className="h-5 w-5 text-indigo-400" />
+            <Monitor className="h-5 w-5 text-teal-400" />
             <div className="text-sm font-semibold text-white">Screen / Window</div>
             <div className="text-xs text-slate-400">
               Native browser capture of any monitor, window, or tab
@@ -118,7 +118,7 @@ export function CaptureModal({
                   onSelectSample(sample);
                   onClose();
                 }}
-                className="group overflow-hidden rounded-xl border border-white/10 bg-[#0b0e16] p-2.5 text-left transition hover:border-indigo-400/60"
+                className="group overflow-hidden rounded-xl border border-white/10 bg-[#0b0e16] p-2.5 text-left transition hover:border-teal-400/60"
               >
                 <div className="aspect-video w-full overflow-hidden rounded-lg bg-slate-900">
                   <img
