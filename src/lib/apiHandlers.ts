@@ -96,20 +96,26 @@ export async function handleShareRequest(
         ? body.title.trim().slice(0, 120)
         : "Untitled Mockup";
     const width =
-      typeof body.width === "number" && body.width > 0
-        ? Math.round(body.width)
+      typeof body.width === "number" &&
+      Number.isFinite(body.width) &&
+      body.width > 0
+        ? Math.min(12000, Math.max(1, Math.round(body.width)))
         : 1200;
     const height =
-      typeof body.height === "number" && body.height > 0
-        ? Math.round(body.height)
+      typeof body.height === "number" &&
+      Number.isFinite(body.height) &&
+      body.height > 0
+        ? Math.min(12000, Math.max(1, Math.round(body.height)))
         : 800;
     const brandKitName =
       typeof body.brandKitName === "string" && body.brandKitName.trim()
         ? body.brandKitName.trim().slice(0, 80)
         : undefined;
     const redactedCount =
-      typeof body.redactedCount === "number" && body.redactedCount >= 0
-        ? Math.round(body.redactedCount)
+      typeof body.redactedCount === "number" &&
+      Number.isFinite(body.redactedCount) &&
+      body.redactedCount >= 0
+        ? Math.min(500, Math.round(body.redactedCount))
         : 0;
 
     const record = {

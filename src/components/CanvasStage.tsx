@@ -1,4 +1,4 @@
-import { Maximize2, Redo2, Undo2, ZoomIn } from "lucide-react";
+import { Check, Copy, Maximize2, Redo2, Undo2, ZoomIn } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { LayoutGeometry } from "../lib/layoutEngine";
 import { renderMockupCanvas } from "../lib/canvasRenderer";
@@ -17,6 +17,10 @@ interface CanvasStageProps {
   imageWidth: number;
   imageHeight: number;
   settings: CanvasSettings;
+  onChangeExportScale: (scale: 1 | 2 | 3) => void;
+  copiedPng: boolean;
+  onCopyPng: () => void;
+  osLabel: string;
   redactions: RedactionBox[];
   annotations: AnnotationItem[];
   brandKit: BrandKit | null;
@@ -39,6 +43,10 @@ export function CanvasStage({
   imageWidth,
   imageHeight,
   settings,
+  onChangeExportScale,
+  copiedPng,
+  onCopyPng,
+  osLabel,
   redactions,
   annotations,
   brandKit,
@@ -65,6 +73,8 @@ export function CanvasStage({
   const [dragCurrent, setDragCurrent] = useState<{ x: number; y: number } | null>(
     null,
   );
+  const [pendingTextCoord, setPendingTextCoord] = useState<{ x: number; y: number } | null>(null);
+  const [calloutText, setCalloutText] = useState("Key highlight");
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -134,17 +144,8 @@ export function CanvasStage({
     }
 
     if (interactionMode === "text") {
-      const label = window.prompt("Callout label text:", "Key highlight");
-      if (label && label.trim()) {
-        onAddAnnotation({
-          kind: "text",
-          x: coords.x,
-          y: coords.y,
-          text: label.trim().slice(0, 48),
-          color: activeColor,
-          strokeWidth,
-        });
-      }
+      setPendingTextCoord(coords);
+      setCalloutText("Key highlight");
       return;
     }
 
@@ -212,7 +213,6 @@ export function CanvasStage({
     setDragCurrent(null);
   };
 
-  // Overlay CSS box for active drag gesture
   const dragOverlayStyle = (() => {
     if (!dragStart || !dragCurrent || !geometry) return null;
     if (interactionMode === "arrow") return null;
@@ -244,11 +244,12 @@ export function CanvasStage({
   })();
 
   const activeRedactionCount = redactions.filter((r) => r.enabled).length;
+  const pasteShortcut = osLabel === "macOS" ? "⌘V" : "Ctrl+V";
 
   return (
     <div
-      className={`relative flex flex-1 flex-col items-center justify-center overflow-auto bg-[#07090e] p-4 sm:p-8 ${
-        dragOver ? "ring-2 ring-inset ring-teal-500" : ""
+      className={`studio-mat relative flex flex-1 flex-col items-center justify-center overflow-auto p-4 sm:p-8 ${
+        dragOver ? "ring-2 ring-inset ring-sky-500" : ""
       }`}
       onDragOver={(e) => {
         e.preventDefault();
@@ -264,38 +265,92 @@ export function CanvasStage({
         }
       }}
     >
-      {/* Top floating status strip */}
-      <div className="mb-4 flex flex-wrap items-center justify-center gap-2 rounded-full border border-white/10 bg-[#121620]/90 px-3.5 py-1.5 text-xs text-slate-300 shadow-lg backdrop-blur">
-        <span className="font-mono text-[11px] text-slate-400">
+      {/* Beginner-friendly status pill */}
+      <div className="mb-4 flex flex-wrap items-center justify-center gap-2 rounded-full border border-zinc-200/90 bg-white/95 px-3.5 py-1.5 text-xs text-zinc-600 shadow-sm">
+        <span className="hidden sm:inline">
+          Drop any image or press <kbd className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[11px] text-zinc-800">{pasteShortcut}</kbd> to replace
+        </span>
+        <span className="hidden text-zinc-300 sm:inline">|</span>
+        <span className="font-mono text-[11px] text-zinc-500 tabular-nums">
           {geometry
-            ? `${geometry.logicalWidth * settings.exportScale} × ${geometry.logicalHeight * settings.exportScale}px (${settings.exportScale}× Retina)`
+            ? `${geometry.logicalWidth * settings.exportScale} × ${geometry.logicalHeight * settings.exportScale}px`
             : `${imageWidth} × ${imageHeight}px`}
         </span>
-        <span className="text-white/15">|</span>
+        <span className="text-zinc-300">|</span>
         <span
           className={
-            activeRedactionCount > 0 ? "text-emerald-400 font-medium" : "text-slate-400"
+            activeRedactionCount > 0 ? "font-semibold text-emerald-700" : "text-zinc-500"
           }
         >
           {activeRedactionCount > 0
-            ? `${activeRedactionCount} secret${activeRedactionCount > 1 ? "s" : ""} redacted`
-            : "No redactions active"}
+            ? `${activeRedactionCount} secret${activeRedactionCount > 1 ? "s" : ""} hidden`
+            : "No redactions yet"}
         </span>
         {interactionMode !== "select" && (
           <>
-            <span className="text-white/15">|</span>
-            <span className="rounded-full bg-teal-500/20 px-2 py-0.5 text-[11px] font-medium text-teal-300">
+            <span className="text-zinc-300">|</span>
+            <span className="rounded-full bg-sky-50 px-2 py-0.5 text-[11px] font-medium text-sky-700">
               {interactionMode === "manual-blur"
-                ? "Drag on screenshot to blur region"
+                ? "Drag on screenshot to blur"
                 : `Tool: ${interactionMode} — click or drag`}
             </span>
           </>
         )}
       </div>
 
+      {/* Inline Callout Label Popover (replaces window.prompt) */}
+      {pendingTextCoord && (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (calloutText.trim()) {
+              onAddAnnotation({
+                kind: "text",
+                x: pendingTextCoord.x,
+                y: pendingTextCoord.y,
+                text: calloutText.trim().slice(0, 48),
+                color: activeColor,
+                strokeWidth,
+              });
+            }
+            setPendingTextCoord(null);
+          }}
+          className="mb-3 flex flex-wrap items-center gap-2 rounded-xl border border-sky-200 bg-white px-3 py-2 text-xs shadow-md"
+        >
+          <label htmlFor="callout-label-input" className="font-medium text-zinc-700">
+            Callout text:
+          </label>
+          <input
+            id="callout-label-input"
+            type="text"
+            autoFocus
+            maxLength={48}
+            value={calloutText}
+            onChange={(e) => setCalloutText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setPendingTextCoord(null);
+            }}
+            className="rounded-lg border border-zinc-300 px-2.5 py-1 text-xs text-zinc-900"
+          />
+          <button
+            type="submit"
+            className="rounded-lg bg-zinc-900 px-2.5 py-1 text-xs font-semibold text-white hover:bg-zinc-800"
+          >
+            Add label
+          </button>
+          <button
+            type="button"
+            onClick={() => setPendingTextCoord(null)}
+            className="rounded-lg border border-zinc-200 px-2 py-1 text-xs text-zinc-600 hover:bg-zinc-50"
+          >
+            Cancel
+          </button>
+        </form>
+      )}
+
       {/* Canvas wrapper */}
       <div
-        className={`relative inline-block overflow-hidden rounded-xl border border-white/10 shadow-2xl ${
+        className={`relative inline-block overflow-hidden rounded-xl border border-zinc-300/80 shadow-xl ${
           settings.background.kind === "transparent" ? "checkerboard-bg" : ""
         }`}
       >
@@ -306,7 +361,7 @@ export function CanvasStage({
           onPointerUp={handlePointerUp}
           style={{
             maxWidth: zoomFit ? "100%" : "none",
-            maxHeight: zoomFit ? "calc(100vh - 220px)" : "none",
+            maxHeight: zoomFit ? "calc(100vh - 230px)" : "none",
             width: zoomFit ? "auto" : undefined,
             height: "auto",
             cursor: interactionMode === "select" ? "default" : "crosshair",
@@ -316,18 +371,18 @@ export function CanvasStage({
         {dragOverlayStyle && (
           <div
             style={dragOverlayStyle}
-            className="pointer-events-none absolute rounded border-2 border-dashed border-cyan-400 bg-cyan-400/15"
+            className="pointer-events-none absolute rounded border-2 border-dashed border-sky-500 bg-sky-500/15"
           />
         )}
       </div>
 
       {/* Bottom quick controls */}
-      <div className="mt-4 flex items-center gap-1.5 rounded-xl border border-white/10 bg-[#121620]/90 p-1 shadow-lg">
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-1.5 rounded-xl border border-zinc-200/90 bg-white p-1.5 shadow-sm">
         <button
           type="button"
           onClick={onUndo}
           disabled={!canUndo}
-          className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 transition hover:bg-white/10 disabled:opacity-35"
+          className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition hover:bg-zinc-100 disabled:opacity-35"
           title="Undo"
         >
           <Undo2 className="h-3.5 w-3.5" />
@@ -337,17 +392,17 @@ export function CanvasStage({
           type="button"
           onClick={onRedo}
           disabled={!canRedo}
-          className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 transition hover:bg-white/10 disabled:opacity-35"
+          className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition hover:bg-zinc-100 disabled:opacity-35"
           title="Redo"
         >
           <Redo2 className="h-3.5 w-3.5" />
           Redo
         </button>
-        <div className="mx-1 h-4 w-px bg-white/10" />
+        <div className="mx-1 h-4 w-px bg-zinc-200" />
         <button
           type="button"
           onClick={() => setZoomFit((z) => !z)}
-          className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 transition hover:bg-white/10"
+          className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition hover:bg-zinc-100"
         >
           {zoomFit ? (
             <>
@@ -358,6 +413,31 @@ export function CanvasStage({
               <Maximize2 className="h-3.5 w-3.5" /> Fit View
             </>
           )}
+        </button>
+        <div className="mx-1 h-4 w-px bg-zinc-200" />
+        <select
+          aria-label="Export resolution scale"
+          value={settings.exportScale}
+          onChange={(e) =>
+            onChangeExportScale(Number(e.target.value) as 1 | 2 | 3)
+          }
+          className="rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1 text-xs font-medium text-zinc-700"
+        >
+          <option value={1}>1× Standard</option>
+          <option value={2}>2× Crisp (Retina)</option>
+          <option value={3}>3× Ultra</option>
+        </select>
+        <button
+          type="button"
+          onClick={onCopyPng}
+          className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition hover:bg-zinc-100"
+        >
+          {copiedPng ? (
+            <Check className="h-3.5 w-3.5 text-emerald-600" />
+          ) : (
+            <Copy className="h-3.5 w-3.5" />
+          )}
+          {copiedPng ? "Copied" : "Copy PNG"}
         </button>
       </div>
     </div>

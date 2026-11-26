@@ -5,11 +5,7 @@
 [![Privacy](https://img.shields.io/badge/Privacy-100%25%20On--Device%20Redaction-10b981?style=for-the-badge)](https://framekit-beta.vercel.app)
 [![Tests](https://img.shields.io/badge/Tests-19%20Passed-emerald?style=for-the-badge)](https://framekit-beta.vercel.app)
 
-**FrameKit** is a high-performance, cross-platform screenshot and product mockup studio built for marketing teams, developers, and product creators. It solves the biggest limitations of macOS-only tools (like CleanShot X and Xnapper) by bringing full parity to Windows and Linux, 1-click automatic privacy redaction, and shared Team Brand Kits.
-
-> [!WARNING]
-> **Project Status — Work in Progress (Not Fully Ready)**
-> This project is currently under active development and is **not fully ready for production**. Some parts, features, or workflow steps will fail or behave unexpectedly. We are actively working on fixing all remaining issues.
+**FrameKit** is a **100% free**, cross-platform screenshot and product mockup studio built for teams, developers, and creators. Drop or paste any screenshot on Windows, macOS, or Linux to frame it cleanly, blur private info on your device in one click, apply shared Team Brand Kits, and export or share a link.
 
 ---
 

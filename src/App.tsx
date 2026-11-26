@@ -1,7 +1,5 @@
 import {
   Camera,
-  Check,
-  Copy,
   Download,
   ExternalLink,
   Share2,
@@ -63,20 +61,19 @@ function createInitialSettings(kit: BrandKit | null): CanvasSettings {
       gradientEnd: kit?.bgGradientEnd ?? "#090d16",
       gradientAngle: kit?.bgAngle ?? 135,
       solidColor: "#0f172a",
-      meshAccent: kit?.accentHex ?? "#22d3ee",
+      meshAccent: kit?.accentHex ?? "#0284c7",
     },
     redactionStyle: "blur",
     redactionIntensity: 14,
     exportScale: 2,
-    headline: "Zero-leak product updates in seconds",
-    subheadline: "Auto-redacted & styled with your Team Brand Kit",
+    headline: "Clean product screenshots in seconds",
+    subheadline: "Private details hidden automatically on your device",
     showHeadline: false,
     activeBrandKitId: kit?.id ?? null,
   };
 }
 
 export default function App() {
-  // Public share route /s/:id
   const shareMatch =
     typeof window !== "undefined"
       ? window.location.pathname.match(/^\/s\/([a-zA-Z0-9_-]{6,40})\/?$/)
@@ -132,7 +129,7 @@ function StudioWorkspace() {
   const [activeTab, setActiveTab] = useState<InspectorTab>("style");
   const [interactionMode, setInteractionMode] =
     useState<InteractionMode>("select");
-  const [activeColor, setActiveColor] = useState<string>("#22d3ee");
+  const [activeColor, setActiveColor] = useState<string>("#0284c7");
 
   const [scanning, setScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
@@ -149,6 +146,8 @@ function StudioWorkspace() {
   const [copiedPng, setCopiedPng] = useState(false);
 
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const toastTimerRef = useRef<number | null>(null);
+  const copyTimerRef = useRef<number | null>(null);
   const [logoImage, setLogoImage] = useState<HTMLImageElement | null>(null);
 
   const activeBrandKit = useMemo(
@@ -156,12 +155,42 @@ function StudioWorkspace() {
     [brandKits, settings.activeBrandKitId],
   );
 
-  const showToast = useCallback((msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast((cur) => (cur === msg ? null : cur)), 3200);
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
+      if (copyTimerRef.current !== null) window.clearTimeout(copyTimerRef.current);
+    };
   }, []);
 
-  // Load image element whenever sourceDataUrl changes
+  const showToast = useCallback((msg: string) => {
+    setToast(msg);
+    if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = window.setTimeout(
+      () => setToast((cur) => (cur === msg ? null : cur)),
+      3200,
+    );
+  }, []);
+
+  const applyBrandKit = useCallback((kit: BrandKit) => {
+    setActiveColor(kit.accentHex);
+    setSettings((prev) => ({
+      ...prev,
+      activeBrandKitId: kit.id,
+      aspectRatio: kit.defaultAspectRatio,
+      padding: kit.defaultPadding,
+      borderRadius: kit.borderRadius,
+      windowFrame: kit.windowFrame,
+      background: {
+        ...prev.background,
+        kind: "mesh",
+        gradientStart: kit.bgGradientStart,
+        gradientEnd: kit.bgGradientEnd,
+        gradientAngle: kit.bgAngle,
+        meshAccent: kit.accentHex,
+      },
+    }));
+  }, []);
+
   useEffect(() => {
     if (!sourceDataUrl) return;
     const img = new Image();
@@ -174,7 +203,6 @@ function StudioWorkspace() {
     img.src = sourceDataUrl;
   }, [sourceDataUrl]);
 
-  // Preload active Brand Kit logo
   useEffect(() => {
     if (!activeBrandKit?.logoDataUrl) {
       setLogoImage(null);
@@ -185,13 +213,14 @@ function StudioWorkspace() {
     img.src = activeBrandKit.logoDataUrl;
   }, [activeBrandKit?.logoDataUrl]);
 
-  // Auto-load ?kit=TEAM-CODE from shared team invite URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const kitCode = params.get("kit");
     if (!kitCode) return;
+    let cancelled = false;
     pullBrandKitFromCloud(kitCode)
       .then((kit) => {
+        if (cancelled) return;
         setBrandKits((prev) => {
           const next = [kit, ...prev.filter((k) => k.teamCode !== kit.teamCode)];
           saveBrandKits(next);
@@ -201,8 +230,10 @@ function StudioWorkspace() {
         showToast(`Loaded Team Brand Kit "${kit.name}" (${kit.teamCode})`);
       })
       .catch(() => {});
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [applyBrandKit, showToast]);
 
   const pushSnapshot = useCallback(
     (nextRedactions: RedactionBox[], nextAnnotations: AnnotationItem[]) => {
@@ -269,7 +300,6 @@ function StudioWorkspace() {
     [loadCustomImageDataUrl, showToast],
   );
 
-  // Global clipboard paste + keyboard undo/redo
   useEffect(() => {
     const onPaste = (e: ClipboardEvent) => {
       const items = e.clipboardData?.items;
@@ -305,11 +335,12 @@ function StudioWorkspace() {
   const handleScreenCapture = async () => {
     setCaptureError(null);
     if (!navigator.mediaDevices?.getDisplayMedia) {
-      setCaptureError("Screen Capture API is not supported in this browser.");
+      setCaptureError("Screen capture is not supported in this browser. Try pasting or uploading a file instead.");
       return;
     }
+    let stream: MediaStream | null = null;
     try {
-      const stream = await navigator.mediaDevices.getDisplayMedia({
+      stream = await navigator.mediaDevices.getDisplayMedia({
         video: { displaySurface: "window" } as MediaTrackConstraints,
         audio: false,
       });
@@ -324,36 +355,17 @@ function StudioWorkspace() {
       const ctx = capCanvas.getContext("2d");
       ctx?.drawImage(video, 0, 0, capCanvas.width, capCanvas.height);
 
-      stream.getTracks().forEach((t) => t.stop());
       const dataUrl = capCanvas.toDataURL("image/png");
       loadCustomImageDataUrl(dataUrl, `Screen Capture (${osLabel})`);
       setCaptureOpen(false);
-      showToast("Screen frame captured!");
+      showToast("Screen captured");
     } catch (err) {
       setCaptureError(
         err instanceof Error ? err.message : "Screen capture was cancelled.",
       );
+    } finally {
+      stream?.getTracks().forEach((t) => t.stop());
     }
-  };
-
-  const applyBrandKit = (kit: BrandKit) => {
-    setActiveColor(kit.accentHex);
-    setSettings((prev) => ({
-      ...prev,
-      activeBrandKitId: kit.id,
-      aspectRatio: kit.defaultAspectRatio,
-      padding: kit.defaultPadding,
-      borderRadius: kit.borderRadius,
-      windowFrame: kit.windowFrame,
-      background: {
-        ...prev.background,
-        kind: "mesh",
-        gradientStart: kit.bgGradientStart,
-        gradientEnd: kit.bgGradientEnd,
-        gradientAngle: kit.bgAngle,
-        meshAccent: kit.accentHex,
-      },
-    }));
   };
 
   const handleAutoMatchBackground = () => {
@@ -375,13 +387,13 @@ function StudioWorkspace() {
         gradientEnd: end,
       },
     }));
-    showToast("Matched canvas gradient to screenshot colors");
+    showToast("Matched background to your screenshot colors");
   };
 
   const handleRunAutoRedact = async () => {
     setScanning(true);
     setScanProgress(5);
-    setScanStatus("Initializing privacy scan...");
+    setScanStatus("Scanning for emails, cards & keys...");
     try {
       const { boxes, usedFallback } = await scanImageForPrivacy({
         imageSource: sourceDataUrl,
@@ -396,9 +408,9 @@ function StudioWorkspace() {
       pushSnapshot([...boxes, ...manualBoxes], annotations);
       if (boxes.length > 0) {
         setScanStatus(`Redacted ${boxes.length} sensitive item(s) locally`);
-        showToast(`Protected ${boxes.length} sensitive item(s)`);
+        showToast(`Hid ${boxes.length} private item(s)`);
       } else if (!usedFallback) {
-        setScanStatus("No sensitive patterns found in scan");
+        setScanStatus("No private items found in scan");
       }
     } finally {
       setScanning(false);
@@ -432,7 +444,7 @@ function StudioWorkspace() {
     a.href = url;
     a.download = `${shotTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${settings.exportScale}x.${format}`;
     a.click();
-    showToast(`Exported ${settings.exportScale}× Retina ${format.toUpperCase()}`);
+    showToast(`Downloaded ${settings.exportScale}× ${format.toUpperCase()}`);
   };
 
   const handleCopyPng = async () => {
@@ -445,12 +457,13 @@ function StudioWorkspace() {
       if (blob && typeof ClipboardItem !== "undefined" && navigator.clipboard?.write) {
         await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
         setCopiedPng(true);
-        setTimeout(() => setCopiedPng(false), 1800);
-        showToast("Copied Retina PNG to clipboard");
+        if (copyTimerRef.current !== null) window.clearTimeout(copyTimerRef.current);
+        copyTimerRef.current = window.setTimeout(() => setCopiedPng(false), 1800);
+        showToast("Copied PNG to clipboard");
         return;
       }
     } catch {
-      // Fallback below
+      // Fallback to direct download below
     }
     handleExport("png");
   };
@@ -460,7 +473,6 @@ function StudioWorkspace() {
     if (!out) return;
     setSharing(true);
     try {
-      // Prefer WebP or 1x/2x PNG within 5MB payload cap
       let dataUrl = out.toDataURL("image/png");
       if (dataUrl.length > 4_800_000) {
         dataUrl = out.toDataURL("image/webp", 0.92);
@@ -476,7 +488,7 @@ function StudioWorkspace() {
       const fullUrl = `${window.location.origin}${res.shareUrl}`;
       setLastShareUrl(fullUrl);
       await navigator.clipboard?.writeText(fullUrl).catch(() => {});
-      showToast("Cloud share link created & copied!");
+      showToast("Share link ready and copied to clipboard");
     } catch (err) {
       showToast(err instanceof Error ? err.message : "Share failed");
     } finally {
@@ -485,31 +497,27 @@ function StudioWorkspace() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#07090e] text-slate-100">
-      {/* Top Studio Header */}
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-[#0e121b] px-4 py-2.5 sm:px-5">
-        <div className="flex items-center gap-3">
+    <div className="flex min-h-screen flex-col bg-[#eef0f4] text-zinc-900">
+      {/* Clean Daylight Studio Header */}
+      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200/90 bg-white px-4 py-2.5 sm:px-5">
+        <div className="flex flex-wrap items-center gap-2.5">
           <div className="flex items-center gap-2">
             <img src="/favicon.svg" alt="FrameKit" className="h-7 w-7 rounded-lg" />
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold tracking-tight text-white">
-                  FrameKit
-                </span>
-                <span className="rounded-full border border-teal-500/30 bg-teal-500/15 px-2 py-0.5 text-[10px] font-semibold text-teal-300">
-                  {osLabel} Parity
-                </span>
-              </div>
-            </div>
+            <span className="text-sm font-bold tracking-tight text-zinc-900">
+              FrameKit
+            </span>
+            <span className="hidden rounded-full border border-sky-200 bg-sky-50 px-2 py-0.5 text-[11px] font-medium text-sky-700 sm:inline-flex">
+              Free
+            </span>
           </div>
 
           <button
             type="button"
             onClick={() => setCaptureOpen(true)}
-            className="flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/10"
+            className="flex items-center gap-1.5 rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-800 transition hover:bg-zinc-50"
           >
-            <Camera className="h-3.5 w-3.5 text-cyan-400" />
-            New Capture
+            <Camera className="h-3.5 w-3.5 text-sky-600" />
+            New screenshot
           </button>
 
           <select
@@ -521,7 +529,7 @@ function StudioWorkspace() {
                 loadCustomImageDataUrl(found.dataUrl, found.name, found.ocrWords);
               }
             }}
-            className="hidden rounded-xl border border-white/10 bg-black/30 px-2.5 py-1.5 text-xs text-slate-300 md:block"
+            className="hidden rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-1.5 text-xs text-zinc-700 md:block"
           >
             {samples.map((s) => (
               <option key={s.id} value={s.id}>
@@ -531,81 +539,52 @@ function StudioWorkspace() {
           </select>
         </div>
 
-        {/* Right Action Strip */}
+        {/* Right Primary Actions */}
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => {
               setActiveTab("privacy");
-              handleRunAutoRedact();
+              void handleRunAutoRedact();
             }}
-            className="flex items-center gap-1.5 rounded-xl border border-emerald-500/35 bg-emerald-500/15 px-3 py-1.5 text-xs font-semibold text-emerald-200 transition hover:bg-emerald-500/25"
+            className="flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800 transition hover:bg-emerald-100"
           >
-            <ShieldCheck className="h-3.5 w-3.5" />
-            {redactions.some((r) => r.enabled) ? "Re-Scan Privacy" : "Auto-Redact"}
-          </button>
-
-          <select
-            aria-label="Retina export scale"
-            value={settings.exportScale}
-            onChange={(e) =>
-              setSettings((p) => ({
-                ...p,
-                exportScale: Number(e.target.value) as 1 | 2 | 3,
-              }))
-            }
-            className="rounded-xl border border-white/10 bg-black/30 px-2.5 py-1.5 text-xs font-medium text-slate-200"
-          >
-            <option value={1}>1× Standard</option>
-            <option value={2}>2× Retina</option>
-            <option value={3}>3× Ultra</option>
-          </select>
-
-          <button
-            type="button"
-            onClick={handleCopyPng}
-            className="flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-white/10"
-          >
-            {copiedPng ? (
-              <Check className="h-3.5 w-3.5 text-emerald-400" />
-            ) : (
-              <Copy className="h-3.5 w-3.5" />
-            )}
-            Copy
+            <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+            {redactions.some((r) => r.enabled) ? "Re-scan privacy" : "Hide private info"}
           </button>
 
           <button
             type="button"
             onClick={() => handleExport("png")}
-            className="flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-white/10"
+            className="flex items-center gap-1.5 rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-800 transition hover:bg-zinc-50"
           >
             <Download className="h-3.5 w-3.5" />
-            Export PNG
+            Download PNG
           </button>
 
           <button
             type="button"
-            onClick={handleCloudShare}
+            onClick={() => void handleCloudShare()}
             disabled={sharing}
-            className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-lg shadow-teal-500/25 transition hover:bg-teal-500 disabled:opacity-60"
+            className="flex items-center gap-1.5 rounded-lg bg-zinc-900 px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-zinc-800 disabled:opacity-60"
           >
             <Share2 className="h-3.5 w-3.5" />
-            {sharing ? "Sharing..." : "Share Link"}
+            {sharing ? "Creating link..." : "Share Link"}
           </button>
         </div>
       </header>
 
       {/* Share Link Banner */}
       {lastShareUrl && (
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-teal-500/30 bg-teal-500/15 px-5 py-2 text-xs text-teal-100">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
-            <span>Live Cloud Share URL ready (copied to clipboard):</span>
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-sky-200 bg-sky-50 px-5 py-2 text-xs text-sky-900">
+          <div className="flex flex-wrap items-center gap-2">
+            <Sparkles className="h-3.5 w-3.5 text-sky-600" />
+            <span>Share link copied to clipboard:</span>
             <a
               href={lastShareUrl}
               target="_blank"
               rel="noreferrer"
-              className="font-mono underline hover:text-white"
+              className="font-mono underline hover:text-sky-700"
             >
               {lastShareUrl}
             </a>
@@ -614,9 +593,9 @@ function StudioWorkspace() {
             href={lastShareUrl}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-1 font-semibold text-cyan-300 hover:underline"
+            className="flex items-center gap-1 font-semibold text-sky-700 hover:underline"
           >
-            Open Share Page <ExternalLink className="h-3 w-3" />
+            Open page <ExternalLink className="h-3 w-3" />
           </a>
         </div>
       )}
@@ -628,6 +607,12 @@ function StudioWorkspace() {
           imageWidth={imageDims.width}
           imageHeight={imageDims.height}
           settings={settings}
+          onChangeExportScale={(scale) =>
+            setSettings((p) => ({ ...p, exportScale: scale }))
+          }
+          copiedPng={copiedPng}
+          onCopyPng={() => void handleCopyPng()}
+          osLabel={osLabel}
           redactions={redactions}
           annotations={annotations}
           brandKit={activeBrandKit}
@@ -681,7 +666,7 @@ function StudioWorkspace() {
           scanning={scanning}
           scanProgress={scanProgress}
           scanStatus={scanStatus}
-          onRunAutoRedact={handleRunAutoRedact}
+          onRunAutoRedact={() => void handleRunAutoRedact()}
           onToggleRedactionBox={(id) =>
             pushSnapshot(
               redactions.map((b) =>
@@ -765,7 +750,7 @@ function StudioWorkspace() {
           loadCustomImageDataUrl(sample.dataUrl, sample.name, sample.ocrWords)
         }
         onUploadFile={handleFileInput}
-        onScreenCapture={handleScreenCapture}
+        onScreenCapture={() => void handleScreenCapture()}
         captureError={captureError}
       />
 
@@ -792,7 +777,10 @@ function StudioWorkspace() {
 
       {/* Toast */}
       {toast && (
-        <div className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 rounded-full border border-white/15 bg-[#181e2c] px-4 py-2 text-xs font-medium text-white shadow-2xl">
+        <div
+          role="status"
+          className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 rounded-full border border-zinc-800 bg-zinc-900 px-4 py-2 text-xs font-medium text-white shadow-xl"
+        >
           {toast}
         </div>
       )}
